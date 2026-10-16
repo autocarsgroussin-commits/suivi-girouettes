@@ -170,3 +170,13 @@ create policy "cars_delete_team" on public.cars for delete to authenticated usin
 --    Statut « annule », panne retirée de la fiche, e-mail « Signalement annulé » aux administrateurs.
 
 -- 10. Heure des signalements dans la panne (« heure ») et rattachement par n° du car (migration « panne_heure_signalement »)
+
+-- ============================================================
+-- 11. Super-administrateur et gestion des comptes (16/10/2026)
+--    Migrations : superadmin_role_contrainte, superadmin_droits, superadmin_enregistrer_utilisateur
+--    - rôle 'superadmin' (prescillia@autocars-groussin.com) ; is_admin / is_staff l'incluent
+--    - private.guard_members : seuls les superadmins touchent aux comptes admin/superadmin
+--    - public.admin_list_users() : comptes + dernière connexion (admins)
+--    - public.admin_save_user(...) : créer/modifier, rôle, actif, mot de passe (superadmin)
+--    - public.admin_delete_user(email) : suppression totale (voir suppression-utilisateur.sql)
+-- ============================================================

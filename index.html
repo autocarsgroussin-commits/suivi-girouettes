@@ -276,7 +276,24 @@ dialog::backdrop{background:rgba(10,20,15,.45)}
 dialog form{display:grid;gap:14px;padding:24px}
 dialog .fld input{background:var(--sf2)}
 dialog .acts{display:flex;gap:8px;justify-content:flex-end}
-#teamdlg{width:min(640px,calc(100% - 24px))}
+#teamdlg{width:min(780px,calc(100% - 24px))}
+.acwrap{grid-template-columns:minmax(0,1fr)}
+.acr{align-items:center}
+.acr .who{display:grid;gap:2px;min-width:0;flex:1 1 220px}
+.acr .who b{font-size:14.5px}.acr .who .em{font-size:13px;color:var(--mute);overflow:hidden;text-overflow:ellipsis}
+.acr .tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.acr.off .who b{color:var(--mute);text-decoration:line-through}
+.acr .seen{font-size:12.5px;color:var(--mute)}
+.acedit{display:block;background:var(--sf2);border-radius:16px;padding:14px;margin:6px 0;border-top:0}
+.acedit .form{background:none;padding:0}
+.acedit .row2{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.acedit .sp{flex:1}
+.pwbox{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--acc-soft);border-radius:14px;padding:12px 14px;margin-top:10px}
+.pwbox code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:18px;font-weight:700;letter-spacing:.04em;color:var(--ink)}
+.pwbox span{font-size:13px;color:var(--mute);flex-basis:100%}
+.chk2{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink)}
+.chk2 input{width:20px;height:20px;accent-color:var(--acc)}
+.badge.sa{background:var(--hero-b);color:#fff}
 .teamwrap{display:grid;gap:14px;padding:22px;max-height:85vh;overflow:auto}
 .teamwrap a{color:var(--acc);font-weight:600}
 .by{color:var(--mute);font-size:13px}
@@ -397,7 +414,7 @@ body[data-screen=app] #app,body[data-screen=login] #login,body[data-screen=setup
    <button class="icon-btn plain" type="button" id="b-menu" aria-haspopup="true" aria-expanded="false" aria-label="Plus d'options" title="Plus d'options"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
    <div class="menu-pop" id="menu-pop" role="menu" hidden>
     <button role="menuitem" data-a="csv"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Exporter les pannes (CSV)</button>
-    <button role="menuitem" data-a="team" id="b-team" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>Gérer l'équipe</button>
+    <button role="menuitem" data-a="team" id="b-team" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>Gérer les comptes</button>
     <button role="menuitem" data-a="pw"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 19 4M16 7l2.5 2.5M14 9l2 2"/></svg>Changer mon mot de passe</button>
     <hr>
     <button role="menuitem" data-a="logout"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l4-4-4-4M14 12H4"/></svg>Se déconnecter</button>
@@ -438,18 +455,17 @@ body[data-screen=app] #app,body[data-screen=login] #login,body[data-screen=setup
  <p class="meta jsum" id="j-sum"></p>
  <ul class="rows" id="j-list"></ul>
 </div></dialog>
-<dialog id="teamdlg" aria-labelledby="teamtitle"><div class="teamwrap">
- <div class="blk-h"><h2 id="teamtitle">Équipe</h2><button class="icon-btn plain" type="button" id="team-close" aria-label="Fermer"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
- <ul class="rows" id="teamlist"></ul>
- <form id="f-team" class="form">
-  <label class="fld w">Adresse e-mail<input type="email" name="email" required></label>
-  <label class="fld">Nom affiché<input type="text" name="nom" placeholder="Prénom"></label>
-  <label class="fld">Rôle<select name="role" id="tm-role"><option value="membre">Membre (bureau)</option><option value="conducteur">Conducteur</option><option value="admin">Administrateur</option></select></label>
-  <label class="fld" id="tm-carf" style="display:none">Car habituel (facultatif)<input type="text" name="car" placeholder="AB-123-CD" autocapitalize="characters"></label>
-  <div class="acts"><button class="btn primary" type="submit">Ajouter</button></div>
- </form>
- <p class="meta" style="margin:0"><b>Conducteur</b> : voit uniquement l'écran de signalement et ses propres signalements. <b>Membre</b> et <b>Administrateur</b> : voient tout le parc. Ajouter une adresse ici l'autorise à se connecter : la personne crée ensuite son compte avec « Créer un compte » sur l'écran de connexion. Vous pouvez aussi le créer pour elle dans Supabase : <a id="usersLink" target="_blank" rel="noopener">Authentication › Users › Add user</a> (mot de passe provisoire, « Auto Confirm User » coché).</p>
+<dialog id="teamdlg" aria-labelledby="teamtitle"><div class="teamwrap acwrap">
+ <div class="blk-h"><h2 id="teamtitle">Comptes <span class="cnt num" id="ac-count"></span></h2><button class="icon-btn plain" type="button" id="team-close" aria-label="Fermer"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+ <div class="jtools">
+  <div class="jseg" role="group" aria-label="Filtrer les comptes" id="ac-seg"></div>
+  <label class="search jsearch"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="sr">Rechercher un compte</span><input type="text" id="ac-q" placeholder="Nom ou e-mail…" autocomplete="off"></label>
+  <button class="btn primary sm" type="button" id="ac-new"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nouveau compte</button>
+ </div>
+ <div id="ac-newbox"></div>
  <div class="msg" id="teammsg" role="alert"></div>
+ <ul class="rows" id="teamlist"></ul>
+ <p class="meta" style="margin:0" id="ac-help"></p>
 </div></dialog>
 <div id="toast" role="status" aria-live="polite"><span id="tmsg"></span><button class="btn sm" id="tundo" data-a="undo" hidden>Annuler</button></div>
 <script src="config.js"></script>
@@ -671,7 +687,7 @@ function checkMember(u){
   if(r.error){if(!me)launch();return}
   if(!r.data){try{localStorage.removeItem('girouettes-me-'+u.id)}catch(e){}denied();return}
   var first=!me;me=r.data;try{localStorage.setItem('girouettes-me-'+u.id,JSON.stringify(me))}catch(e){}
-  $('b-team').hidden=me.role!=='admin';
+  $('b-team').hidden=!isAdm();
   if(me.role==='conducteur'){if(first||document.body.dataset.screen!=='driver')launchDriver();return}
   if(first||document.body.dataset.screen==='driver')launch();
  });
@@ -679,7 +695,7 @@ function checkMember(u){
 function denied(){if(channel){sb.removeChannel(channel);channel=null}$('deniedmail').textContent=user.email||'';screen('denied')}
 function launch(){
  if(me&&me.role==='conducteur'){launchDriver();return}
- if(me)$('b-team').hidden=me.role!=='admin';
+ if(me)$('b-team').hidden=!isAdm();
  loaded=loadLocal();
  if(!MOBILE()&&S.cars.length)sel=sorted(S.cars)[0].id;
  screen('app');renderAll();setSync();
@@ -833,40 +849,120 @@ function trace(o,label){var a=[];if(o.par)a.push((o.source==='conducteur'?'<span
 function renderAll(){renderStats();renderList();renderFiche()}
 
 /* ---------- équipe ---------- */
-var team=[];
+var team=[],acFilter='all',acEdit=null,acDel=null,acPw=null,acNew=false;
+var ROLES={superadmin:'Super-administrateur',admin:'Administrateur',membre:'Membre (bureau)',conducteur:'Conducteur'};
+function isAdm(){return !!(me&&(me.role==='admin'||me.role==='superadmin'))}
+function isSuper(){return !!(me&&me.role==='superadmin')}
+function genPw(){var A='abcdefghjkmnpqrstuvwxyz',D='23456789',U='ABCDEFGHJKLMNPQRSTUVWXYZ',r=function(set,n){var a=new Uint32Array(n),o='';crypto.getRandomValues(a);for(var i=0;i<n;i++)o+=set[a[i]%set.length];return o};return r(U,1)+r(A,3)+'-'+r(D,4)+'-'+r(A+D,4)}
 function tmsg(t,err){var m=$('teammsg');m.textContent=t||'';m.className='msg'+(err?' err':'')}
-function openTeam(){var d=$('teamdlg');tmsg('');$('usersLink').href='https://supabase.com/dashboard/project/'+(CFG.supabaseUrl.split('//')[1]||'').split('.')[0]+'/auth/users';if(d.showModal)d.showModal();else d.setAttribute('open','');loadTeam()}
+function openTeam(){var d=$('teamdlg');tmsg('');acEdit=null;acDel=null;acPw=null;acNew=false;$('ac-q').value='';
+ $('ac-help').innerHTML=isSuper()?'Vous êtes <b>super-administrateur</b> : vous pouvez créer les identifiants, changer les mots de passe et les rôles, désactiver ou supprimer un compte.':'Les administrateurs gèrent les membres et les conducteurs. Seul le super-administrateur crée les identifiants, change les mots de passe et gère les administrateurs.';
+ if(d.showModal)d.showModal();else d.setAttribute('open','');loadTeam()}
 function loadTeam(){
- $('teamlist').innerHTML='<li class="empty">Chargement…</li>';
- sb.from('members').select('*').order('created_at').then(function(r){
-  if(r.error){tmsg('Impossible de charger l\'équipe : '+r.error.message,true);return}
-  team=r.data;renderTeam();
+ if(!team.length)$('teamlist').innerHTML='<li class="empty">Chargement…</li>';
+ return sb.rpc('admin_list_users').then(function(r){
+  if(r.error){tmsg('Impossible de charger les comptes : '+r.error.message,true);return}
+  team=r.data||[];renderTeam();
  });
 }
+function canEdit(m){if(isSuper())return true;return isAdm()&&m.role!=='admin'&&m.role!=='superadmin'}
+function roleOpts(cur){var keys=isSuper()?['superadmin','admin','membre','conducteur']:['membre','conducteur'];return keys.map(function(k){return '<option value="'+k+'"'+(k===cur?' selected':'')+'>'+ROLES[k]+'</option>'}).join('')}
+function acRows(){
+ var qq=$('ac-q').value.trim().toLowerCase();
+ return team.filter(function(m){
+  if(acFilter==='bureau'&&m.role==='conducteur')return false;
+  if(acFilter==='conducteur'&&m.role!=='conducteur')return false;
+  if(acFilter==='off'&&m.actif)return false;
+  if(acFilter==='never'&&(!m.a_un_compte||m.derniere_connexion))return false;
+  if(!qq)return true;return ((m.nom||'')+' '+m.email).toLowerCase().indexOf(qq)>-1;
+ });
+}
+function pwBox(p){return '<div class="pwbox"><span>Nouveau mot de passe pour '+esc(p.email)+', affiché une seule fois :</span><code>'+esc(p.pw)+'</code><button class="btn sm" type="button" data-acc="copy">Copier</button></div>'}
 function renderTeam(){
- $('teamlist').innerHTML=team.map(function(m){var self=m.email===(me&&me.email);
-  return '<li class="rw'+(m.actif?'':' done')+'"><span class="grow"><span class="txt"><b>'+esc(m.nom||byName(m.email))+'</b>'+(self?' (vous)':'')+'</span><span class="sub2">'+esc(m.email)+'</span></span>'+
-  '<span class="badge'+(m.role==='admin'?' strong':'')+'">'+(m.role==='admin'?'Administrateur':m.role==='conducteur'?'Conducteur'+(m.car_habituel?' · '+esc(m.car_habituel):''):'Membre')+'</span>'+
-  (self?'':'<button class="btn sm'+(m.actif?' danger':'')+'" type="button" data-tm="'+esc(m.email)+'">'+(m.actif?'Retirer l\'accès':'Rétablir l\'accès')+'</button>')+'</li>'}).join('');
+ var c={all:team.length,bureau:0,conducteur:0,off:0,never:0};
+ team.forEach(function(m){if(m.role==='conducteur')c.conducteur++;else c.bureau++;if(!m.actif)c.off++;if(m.a_un_compte&&!m.derniere_connexion)c.never++});
+ $('ac-count').textContent=team.length;
+ $('ac-seg').innerHTML=[['all','Tous'],['bureau','Bureau'],['conducteur','Conducteurs'],['never','Jamais connectés'],['off','Désactivés']].map(function(x){return '<button type="button" data-acf="'+x[0]+'" aria-pressed="'+(acFilter===x[0])+'">'+x[1]+' ('+c[x[0]]+')</button>'}).join('');
+ $('ac-new').hidden=!isAdm();
+ $('ac-newbox').innerHTML=acNew?'<div class="acedit"><form class="form" id="f-acnew">'+
+   '<label class="fld w">Adresse e-mail<input type="email" name="email" required autocomplete="off"></label>'+
+   '<label class="fld">Nom affiché<input type="text" name="nom" placeholder="Prénom Nom"></label>'+
+   '<label class="fld">Rôle<select name="role" data-acrole="1">'+roleOpts('conducteur')+'</select></label>'+
+   '<label class="fld" data-accar="1">Car habituel<input type="text" name="car" placeholder="Ex. 504"></label>'+
+   (isSuper()?'<label class="chk2 w"><input type="checkbox" name="mkpw" checked> Créer l\'identifiant avec un mot de passe provisoire</label>':'<p class="meta w" style="margin:0">La personne créera elle-même son mot de passe avec « Créer un compte » sur l\'écran de connexion.</p>')+
+   '<div class="acts"><button class="btn" type="button" data-acc="cancelnew">Annuler</button><button class="btn primary" type="submit">Créer</button></div></form>'+(acPw&&acPw.isNew?pwBox(acPw):'')+'</div>':(acPw&&acPw.isNew?'<div class="acedit">'+pwBox(acPw)+'</div>':'');
+ var l=acRows(),lim=l.slice(0,120);
+ $('teamlist').innerHTML=lim.length?lim.map(function(m){
+  var self=m.email===(me&&me.email),ed=canEdit(m)&&!self||(self&&isSuper());
+  var seen=!m.a_un_compte?'Pas d\'identifiant':m.derniere_connexion?'Vu le '+new Date(m.derniere_connexion).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):'Jamais connecté';
+  var h='<li class="rw acr'+(m.actif?'':' off')+'"><span class="who"><b>'+esc(m.nom||byName(m.email))+(self?' (vous)':'')+'</b><span class="em">'+esc(m.email)+'</span></span>'+
+   '<span class="tags"><span class="badge'+(m.role==='superadmin'?' sa':m.role==='admin'?' strong':'')+'">'+esc(ROLES[m.role]||m.role)+(m.role==='conducteur'&&m.car_habituel?' · '+esc(m.car_habituel):'')+'</span>'+(m.actif?'':'<span class="badge bad">Désactivé</span>')+'<span class="seen">'+seen+'</span></span>'+
+   (ed?'<button class="btn sm" type="button" data-ace="'+esc(m.email)+'">'+(acEdit===m.email?'Fermer':'Modifier')+'</button>':'')+'</li>';
+  if(acEdit===m.email){
+   h+='<li class="rw acedit"><form class="form" data-acform="'+esc(m.email)+'">'+
+    '<label class="fld">Nom affiché<input type="text" name="nom" value="'+esc(m.nom)+'"></label>'+
+    '<label class="fld">Rôle<select name="role" data-acrole="1"'+(self?' disabled':'')+'>'+roleOpts(m.role)+'</select></label>'+
+    '<label class="fld" data-accar="1"'+(m.role==='conducteur'?'':' style="display:none"')+'>Car habituel<input type="text" name="car" value="'+esc(m.car_habituel)+'"></label>'+
+    (self?'':'<label class="chk2"><input type="checkbox" name="actif"'+(m.actif?' checked':'')+'> Compte actif</label>')+
+    '<div class="acts"><button class="btn primary" type="submit">Enregistrer</button></div></form>'+
+    (isSuper()?'<div class="row2"><button class="btn sm" type="button" data-acp="'+esc(m.email)+'"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 19 4M16 7l2.5 2.5M14 9l2 2"/></svg>'+(m.a_un_compte?'Nouveau mot de passe':'Créer l\'identifiant')+'</button><span class="sp"></span>'+
+     (self?'':acDel===m.email?'<span class="meta">Supprimer définitivement '+esc(m.email)+' ?</span><button class="btn sm danger" type="button" data-acd2="'+esc(m.email)+'">Oui, supprimer</button><button class="btn sm" type="button" data-acc="nodel">Non</button>':'<button class="btn sm danger" type="button" data-acd="'+esc(m.email)+'">'+ic('trash')+'Supprimer l\'utilisateur</button>')+'</div>':'')+
+    (acPw&&!acPw.isNew&&acPw.email===m.email?pwBox(acPw):'')+'</li>';
+  }
+  return h}).join('')+(l.length>lim.length?'<li class="empty">'+(l.length-lim.length)+' autres comptes : affinez la recherche.</li>':''):'<li class="empty">Aucun compte ne correspond.</li>';
 }
-$('tm-role').addEventListener('change',function(){$('tm-carf').style.display=this.value==='conducteur'?'':'none'});
-$('team-close').addEventListener('click',function(){var d=$('teamdlg');if(d.close)d.close();else d.removeAttribute('open')});
-$('teamlist').addEventListener('click',function(e){
- var b=e.target.closest('[data-tm]');if(!b)return;
- var m=team.filter(function(x){return x.email===b.dataset.tm})[0];if(!m)return;
- b.disabled=true;
- sb.from('members').update({actif:!m.actif}).eq('email',m.email).then(function(r){
-  if(r.error){b.disabled=false;tmsg('Échec : '+r.error.message,true);return}
-  tmsg(m.actif?'Accès retiré à '+m.email+'.':'Accès rétabli pour '+m.email+'.');loadTeam();
- });
+function closeTeam(){var d=$('teamdlg');if(d.close)d.close();else d.removeAttribute('open');acPw=null}
+$('team-close').addEventListener('click',closeTeam);
+$('ac-q').addEventListener('input',renderTeam);
+$('ac-new').addEventListener('click',function(){acNew=!acNew;acPw=null;tmsg('');renderTeam();if(acNew){var f=document.querySelector('#f-acnew input[name=email]');if(f)f.focus()}});
+$('teamdlg').addEventListener('change',function(e){var t=e.target;if(t.dataset&&t.dataset.acrole){var f=t.closest('form'),c=f&&f.querySelector('[data-accar]');if(c)c.style.display=t.value==='conducteur'?'':'none'}});
+function saveUser(o){
+ if(isSuper())return sb.rpc('admin_save_user',{p_email:o.email,p_nom:o.nom,p_role:o.role,p_car:o.car||'',p_actif:o.actif,p_password:o.pw||null});
+ return sb.from('members').upsert({email:o.email,nom:o.nom,role:o.role,car_habituel:o.role==='conducteur'?normPlate(o.car):'',actif:o.actif});
+}
+function errTxt(e){var m=(e&&e.message)||'';if(/admin_delete_user/.test(m)&&/find|exist|schema cache/i.test(m))return "La suppression totale n'est pas encore activée dans la base (voir le guide).";return m}
+$('teamdlg').addEventListener('click',function(e){
+ var b=e.target.closest('button');if(!b)return;
+ if(b.dataset.acf){acFilter=b.dataset.acf;renderTeam();return}
+ if(b.dataset.ace){acEdit=acEdit===b.dataset.ace?null:b.dataset.ace;acDel=null;if(acPw&&!acPw.isNew)acPw=null;tmsg('');renderTeam();return}
+ if(b.dataset.acc==='cancelnew'){acNew=false;acPw=null;renderTeam();return}
+ if(b.dataset.acc==='nodel'){acDel=null;renderTeam();return}
+ if(b.dataset.acc==='copy'){var t=acPw&&acPw.pw;if(t&&navigator.clipboard)navigator.clipboard.writeText(t).then(function(){toast('Mot de passe copié')},function(){});return}
+ if(b.dataset.acd){acDel=b.dataset.acd;renderTeam();return}
+ if(b.dataset.acd2){var em=b.dataset.acd2;b.disabled=true;
+  sb.rpc('admin_delete_user',{p_email:em}).then(function(r){
+   if(r.error){b.disabled=false;tmsg('Suppression impossible : '+errTxt(r.error),true);return}
+   acDel=null;acEdit=null;tmsg(em+' a été supprimé : il ne peut plus se connecter. Ses signalements passés restent dans l\'historique.');loadTeam();
+  });return}
+ if(b.dataset.acp){var m=team.filter(function(x){return x.email===b.dataset.acp})[0];if(!m)return;var pw=genPw();b.disabled=true;
+  saveUser({email:m.email,nom:m.nom,role:m.role,car:m.car_habituel,actif:m.actif,pw:pw}).then(function(r){
+   b.disabled=false;if(r.error){tmsg('Échec : '+errTxt(r.error),true);return}
+   acPw={email:m.email,pw:pw,isNew:false};tmsg('');loadTeam();
+  });return}
 });
-$('f-team').addEventListener('submit',function(e){
- e.preventDefault();e.stopPropagation();var f=e.target,d=new FormData(f);
- var em=String(d.get('email')||'').trim().toLowerCase();if(!em)return;
- sb.from('members').upsert({email:em,nom:String(d.get('nom')||'').trim(),role:d.get('role'),car_habituel:d.get('role')==='conducteur'?normPlate(d.get('car')):'',actif:true}).then(function(r){
-  if(r.error){tmsg('Échec : '+r.error.message,true);return}
-  f.reset();$('tm-carf').style.display='none';tmsg(em+' est autorisé. Il peut maintenant créer son compte depuis l\'écran de connexion (« Créer un compte »), ou vous pouvez le créer dans Supabase (lien ci-dessus).');loadTeam();
- });
+$('teamdlg').addEventListener('submit',function(e){
+ var f=e.target;e.preventDefault();e.stopPropagation();var d=new FormData(f);
+ if(f.id==='f-acnew'){
+  var em=String(d.get('email')||'').trim().toLowerCase();if(!em)return;
+  if(team.some(function(x){return x.email===em})){tmsg(em+' existe déjà : utilisez « Modifier » sur sa ligne.',true);return}
+  var pw=isSuper()&&d.get('mkpw')?genPw():null;
+  saveUser({email:em,nom:String(d.get('nom')||'').trim(),role:d.get('role'),car:normPlate(d.get('car')),actif:true,pw:pw}).then(function(r){
+   if(r.error){tmsg('Échec : '+errTxt(r.error),true);return}
+   acPw=pw?{email:em,pw:pw,isNew:true}:null;acNew=false;
+   tmsg(pw?'Compte créé : transmettez ce mot de passe à la personne.':em+' est autorisé : il crée son mot de passe avec « Créer un compte » sur l\'écran de connexion.');
+   loadTeam();
+  });return;
+ }
+ if(f.dataset.acform){
+  var m=team.filter(function(x){return x.email===f.dataset.acform})[0];if(!m)return;
+  var self=m.email===(me&&me.email);
+  var o={email:m.email,nom:String(d.get('nom')||'').trim(),role:self?m.role:d.get('role'),car:normPlate(d.get('car')||''),actif:self?true:!!d.get('actif')};
+  saveUser(o).then(function(r){
+   if(r.error){tmsg('Échec : '+errTxt(r.error),true);return}
+   tmsg('Modifications enregistrées pour '+m.email+'.');acEdit=null;loadTeam();
+   if(self){me.nom=o.nom}
+  });
+ }
 });
 $('b-denied-out').addEventListener('click',function(){sb.auth.signOut()});
 
